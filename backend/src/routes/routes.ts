@@ -12,5 +12,6 @@ router.use('/users', usersRouter());
 router.use('/stores', storesRouter());
 router.use('/stores/:storeId/products', productsRouter());
 router.use('/stores/:storeId/categories', categoriesRouter());
+router.use('/cart', cartRouter());
 
 export { router };
