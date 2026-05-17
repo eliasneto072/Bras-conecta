@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Brás Atacado — MVP</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container header__row">
+      <a class="brand" href="#/">Brás Atacado</a>
+
+      <nav class="nav">
+        <a href="#/lojas" data-active="lojas">Lojas</a>
+        <a href="#/carrinho" data-active="carrinho">
+          Carrinho <span id="cartBadge" class="badge badge--dark">0</span>
+        </a>
+        <a href="#/dashboard" class="btn">Painel do lojista</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="app"></main>
+
+  <footer class="footer">
+    <div class="container">
+      © <span id="year"></span> Brás Atacado — MVP
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
