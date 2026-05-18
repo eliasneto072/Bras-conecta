@@ -11,6 +11,7 @@ import { renderLogin }       from './pages/login.js';
 import { renderDashboard }   from './pages/dashboard/index.js';
 import { updateCartBadge }   from './cart.js';
 import { isLoggedIn, isSeller, getUser, logout } from './auth.js';
+import { renderDashboardProducts } from './pages/dashboard/products.js';
 
 // ============================
 // Header dinâmico
@@ -75,7 +76,13 @@ async function route() {
 
   if (parts[0] === 'carrinho')                         return renderCart();
   if (parts[0] === 'login')                            return renderLogin();
-  if (parts[0] === 'dashboard')                        return renderDashboard();
+  if (parts[0] === 'dashboard') {
+
+  if (parts[1] === 'products')
+    return renderDashboardProducts();
+
+  return renderDashboard();
+}
 
   return renderNotFound();
 }

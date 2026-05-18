@@ -454,3 +454,75 @@ body{
   border-radius:12px;
   color:#6b7280;
 }
+
+/* ============================
+   DASHBOARD PRODUCTS
+============================ */
+
+.dashboard-page-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.dashboard-page-header h1{
+  margin-bottom:4px;
+}
+
+.dashboard-page-header p{
+  margin:0;
+  color:#6b7280;
+}
+
+.dashboard-products-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:20px;
+}
+
+.dashboard-product-card{
+  background:white;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 2px 10px rgba(0,0,0,.05);
+}
+
+.dashboard-product-image{
+  height:180px;
+  background:#e5e7eb;
+}
+
+.dashboard-product-body{
+  padding:20px;
+}
+
+.dashboard-product-body h3{
+  margin-top:0;
+}
+
+.dashboard-product-body p{
+  color:#6b7280;
+  min-height:40px;
+}
+
+.dashboard-product-meta{
+  display:flex;
+  justify-content:space-between;
+  margin:20px 0;
+  font-weight:700;
+}
+
+.dashboard-product-actions{
+  display:flex;
+  gap:10px;
+}
+
+.btn-danger{
+  border:none;
+  background:#ef4444;
+  color:white;
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+}
