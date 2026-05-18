@@ -81,55 +81,73 @@ export async function renderDashboard() {
     </section>
   `;
 
-  try {
+ try {
 
-    const response = await storesApi.getMyStores();
+  const response = await storesApi.getMyStores();
 
-    const stores = response.data?.stores || response.stores || [];
+  const stores = response.data?.stores || response.stores || [];
 
-    const store = stores[0];
+  const store = stores[0];
 
-    if (!store) {
-
-      document.getElementById('dashboardStoreName').innerText =
-        'Nenhuma loja cadastrada';
-
-      document.getElementById('dashboardStoreBox').innerHTML = `
-        <div class="empty-box">
-          Você ainda não possui loja cadastrada.
-        </div>
-      `;
-
-      return;
-    }
+  if (!store) {
 
     document.getElementById('dashboardStoreName').innerText =
-      store.name;
-
-    document.getElementById('dashboardStoreBox').innerHTML = `
-      <div class="store-card">
-
-        <h3>${store.name}</h3>
-
-        <p>${store.description || 'Sem descrição'}</p>
-
-        <div class="store-meta">
-          <span>${store.city || '-'} / ${store.state || '-'}</span>
-          <span>Pedido mínimo: R$ ${store.minOrderValue || '0'}</span>
-        </div>
-
-      </div>
-    `;
-
-  } catch (err) {
-
-    document.getElementById('dashboardStoreName').innerText =
-      'Erro ao carregar loja';
+      'Nenhuma loja cadastrada';
 
     document.getElementById('dashboardStoreBox').innerHTML = `
       <div class="empty-box">
-        Erro ao carregar dados.
+        Você ainda não possui loja cadastrada.
       </div>
     `;
+
+    return;
   }
+
+  // atualiza nome
+  document.getElementById('dashboardStoreName').innerText =
+    store.name;
+
+  // busca produtos
+  const productsResponse = await fetch(
+    `http://localhost:3000/stores/${store.id}/products`
+  );
+
+  const productsData = await productsResponse.json();
+
+  const products =
+    productsData.data?.products || [];
+
+  // atualiza contador
+  document.getElementById('productsCount').innerText =
+    products.length;
+
+  // render loja
+  document.getElementById('dashboardStoreBox').innerHTML = `
+    <div class="store-card">
+
+      <h3>${store.name}</h3>
+
+      <p>${store.description || 'Sem descrição'}</p>
+
+      <div class="store-meta">
+        <span>${store.city || '-'} / ${store.state || '-'}</span>
+        <span>Pedido mínimo: R$ ${store.minOrderValue || '0'}</span>
+      </div>
+
+    </div>
+  `;
+
+} catch (err) {
+
+  console.error(err);
+
+  document.getElementById('dashboardStoreName').innerText =
+    'Erro ao carregar loja';
+
+  document.getElementById('dashboardStoreBox').innerHTML = `
+    <div class="empty-box">
+      Erro ao carregar dados.
+    </div>
+  `;
+}
 }
