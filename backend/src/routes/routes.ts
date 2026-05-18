@@ -6,6 +6,7 @@ import { productsRouter } from '../modules/products/products.routes';
 import { categoriesRouter } from '../modules/categories/categories.routes';
 import { cartRouter } from '../modules/cart/cart.routes';
 import { ordersRouter } from '../modules/orders/orders.routes';
+import { uploadRoutes } from '../modules/upload/upload.routes';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/stores/:storeId/products', productsRouter());
 router.use('/stores/:storeId/categories', categoriesRouter());
 router.use('/cart', cartRouter());
 router.use('/orders', ordersRouter());
+router.use('/upload', uploadRoutes);
 
 export { router };
