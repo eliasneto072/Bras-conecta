@@ -3,7 +3,7 @@
 // ============================
 
 import { requireSeller } from '../../auth.js';
-import { storesApi, productsApi } from '../../api.js';
+import { storesApi, productsApi, uploadApi } from '../../api.js';
 import { brl } from '../../utils.js';
 
 let currentStore = null;
@@ -122,6 +122,30 @@ export async function renderDashboardProducts() {
           />
 
           <div class="hr"></div>
+
+          <div class="label">Imagem do produto</div>
+
+<input
+  class="input"
+  id="productImage"
+  type="file"
+  accept="image/*"
+/>
+
+<div style="height:12px"></div>
+
+<img
+  id="productPreview"
+  style="
+    width:100%;
+    height:220px;
+    object-fit:cover;
+    border-radius:16px;
+    display:none;
+  "
+/>
+
+<div class="hr"></div>
 
           <button class="btn" id="saveProductBtn">
             Criar Produto
@@ -279,7 +303,17 @@ function productCard(product) {
   return `
     <div class="dashboard-product-card">
 
-      <div class="dashboard-product-image"></div>
+      <div class="dashboard-product-image">
+
+  <img
+    src="${
+      product.coverImage ||
+      'https://placehold.co/600x400?text=Produto'
+    }"
+    alt="${product.name}"
+  />
+
+</div>
 
       <div class="dashboard-product-body">
 
@@ -329,6 +363,26 @@ function setupModal(store) {
   const modal =
     document.getElementById('productModal');
 
+    const imageInput =
+  document.getElementById('productImage');
+
+const preview =
+  document.getElementById('productPreview');
+
+imageInput.addEventListener('change', () => {
+
+  const file =
+    imageInput.files[0];
+
+  if (!file) return;
+
+  preview.src =
+    URL.createObjectURL(file);
+
+  preview.style.display = 'block';
+
+});
+
   // abrir
   document
     .getElementById('newProductBtn')
@@ -373,14 +427,32 @@ function setupModal(store) {
 
       try {
 
-        await productsApi.create(store.id, {
-          name,
-          description,
-          priceFrom,
-          minQty
-        });
+  const imageFile =
+    document.getElementById('productImage')
+    .files[0];
 
-        alert('Produto criado com sucesso');
+  let coverImage = null;
+
+  // upload cloudinary
+  if (imageFile) {
+
+    const upload =
+      await uploadApi.image(imageFile);
+
+    coverImage =
+      upload.data.secure_url;
+
+  }
+
+  await productsApi.create(store.id, {
+    name,
+    description,
+    priceFrom,
+    minQty,
+    coverImage
+  });
+
+  alert('Produto criado com sucesso');
 
         modal.classList.add('hidden');
 
