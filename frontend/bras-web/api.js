@@ -9,33 +9,81 @@ const BASE_URL = 'http://localhost:3000'; // troca pela URL de produção no dep
 // ============================
 
 async function request(method, path, body = null, auth = false) {
-  const headers = { 'Content-Type': 'application/json' };
+
+  const headers = {};
+
+  // NÃO adiciona content-type em FormData
+  if (!(body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   if (auth) {
-    const token = localStorage.getItem('bras_token');
-    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const token =
+      localStorage.getItem('bras_token');
+
+    if (token) {
+      headers['Authorization'] =
+        `Bearer ${token}`;
+    }
+
   }
 
-  const options = { method, headers };
-  if (body) options.body = JSON.stringify(body);
+  const options = {
+    method,
+    headers
+  };
 
-  const res = await fetch(`${BASE_URL}${path}`, options);
+  if (body) {
 
-  // token expirado — desloga automaticamente
+    options.body =
+      body instanceof FormData
+        ? body
+        : JSON.stringify(body);
+
+  }
+
+  const res =
+    await fetch(`${BASE_URL}${path}`, options);
+
+  // sessão expirada
   if (res.status === 401) {
+
     localStorage.removeItem('bras_token');
     localStorage.removeItem('bras_user');
+
     window.location.hash = '#/login';
-    throw new Error('Sessão expirada. Faça login novamente.');
+
+    throw new Error(
+      'Sessão expirada. Faça login novamente.'
+    );
+
   }
 
-  const data = await res.json();
+  // DELETE 204
+  if (res.status === 204) {
+    return true;
+  }
+
+  // tenta ler json
+  let data = null;
+
+  try {
+    data = await res.json();
+  } catch {
+    data = null;
+  }
 
   if (!res.ok) {
-    throw new Error(data?.message || 'Erro na requisição');
+
+    throw new Error(
+      data?.message || 'Erro na requisição'
+    );
+
   }
 
   return data;
+
 }
 
 const get  = (path, auth = false)        => request('GET',    path, null, auth);

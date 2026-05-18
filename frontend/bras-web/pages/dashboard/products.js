@@ -346,9 +346,12 @@ function productCard(product) {
             Editar
           </button>
 
-          <button class="btn-danger">
-            Excluir
-          </button>
+          <button
+  class="btn-danger deleteProductBtn"
+  data-product="${product.id}"
+>
+  Excluir
+</button>
 
         </div>
 
@@ -565,6 +568,44 @@ function setupVariants(store, products) {
       }
 
     });
+
+  // excluir produto
+document
+  .querySelectorAll('.deleteProductBtn')
+  .forEach(btn => {
+
+    btn.addEventListener('click', async () => {
+
+      const productId =
+        btn.dataset.product;
+
+      const confirmDelete =
+        confirm('Deseja excluir este produto?');
+
+      if (!confirmDelete) return;
+
+      try {
+
+        await productsApi.remove(
+          store.id,
+          productId
+        );
+
+        alert('Produto excluído');
+
+        renderDashboardProducts();
+
+      } catch (err) {
+
+        console.error(err);
+
+        alert('Erro ao excluir produto');
+
+      }
+
+    });
+
+  });
 }
 
 function renderVariants() {
