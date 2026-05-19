@@ -585,3 +585,18 @@ body{
   object-fit: cover;
   display: block;
 }
+
+/* ── Variante selecionada no detalhe do produto ── */
+.chip--active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+/* ── Item de variante no dashboard em modo edição ── */
+.variant-item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
