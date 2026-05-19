@@ -3,7 +3,7 @@
 // ============================
 
 import { storesApi, productsApi } from '../api.js';
-import { brl, storeCard, productCard, setActiveNav } from '../utils.js';
+import { brl, storeCard, productCard, setActiveNav, skeletonStoreCards, skeletonProductCards } from '../utils.js';
 
 export async function renderHome() {
   setActiveNav(null);
@@ -36,7 +36,7 @@ export async function renderHome() {
         <a class="link" href="#/lojas">Ver todas</a>
       </div>
       <div class="grid cols-3" id="featuredStores">
-        ${skeletonCards(3)}
+        ${skeletonStoreCards(3)}
       </div>
     </section>
 
@@ -45,23 +45,18 @@ export async function renderHome() {
         <h2 class="h2">Produtos em alta</h2>
       </div>
       <div class="grid cols-3" id="hotProducts">
-        ${skeletonCards(6)}
+        ${skeletonProductCards(6)}
       </div>
     </section>
   `;
 
-  // carrega lojas e produtos em paralelo
   try {
-    const [storesData] = await Promise.all([
-      storesApi.list(),
-    ]);
-
+    const [storesData] = await Promise.all([storesApi.list()]);
     const stores = storesData.data?.stores || [];
 
     document.getElementById('featuredStores').innerHTML =
-      stores.slice(0, 3).map(storeCard).join('') || '<p class="muted">Nenhuma loja ainda.</p>';
+      stores.slice(0, 3).map(storeCard).join('') || emptyState('lojas');
 
-    // carrega produtos das primeiras lojas
     const productPromises = stores.slice(0, 3).map(s =>
       productsApi.list(s.id).then(d => d.data?.products || []).catch(() => [])
     );
@@ -69,22 +64,26 @@ export async function renderHome() {
     const allProducts = productsNested.flat().slice(0, 6);
 
     document.getElementById('hotProducts').innerHTML =
-      allProducts.map(productCard).join('') || '<p class="muted">Nenhum produto ainda.</p>';
+      allProducts.map(productCard).join('') || emptyState('produtos');
 
   } catch (err) {
-    document.getElementById('featuredStores').innerHTML = `<p class="muted">Erro ao carregar lojas.</p>`;
-    document.getElementById('hotProducts').innerHTML = `<p class="muted">Erro ao carregar produtos.</p>`;
+    document.getElementById('featuredStores').innerHTML = errorState('lojas');
+    document.getElementById('hotProducts').innerHTML = errorState('produtos');
   }
 }
 
-function skeletonCards(n) {
-  return Array(n).fill(`
-    <div class="card skeleton">
-      <div class="cover" style="background:#f0f0f0"></div>
-      <div class="card__body">
-        <div style="height:16px;background:#f0f0f0;border-radius:8px;margin-bottom:8px"></div>
-        <div style="height:12px;background:#f0f0f0;border-radius:8px;width:60%"></div>
-      </div>
-    </div>
-  `).join('');
+function emptyState(tipo) {
+  return `<div class="empty-state" style="grid-column:1/-1">
+    <span class="empty-state__icon">🏪</span>
+    <p class="empty-state__title">Nenhuma ${tipo} ainda</p>
+    <p class="empty-state__sub">Em breve novos itens aparecerão aqui.</p>
+  </div>`;
+}
+
+function errorState(tipo) {
+  return `<div class="empty-state empty-state--error" style="grid-column:1/-1">
+    <span class="empty-state__icon">⚠️</span>
+    <p class="empty-state__title">Erro ao carregar ${tipo}</p>
+    <p class="empty-state__sub">Verifique sua conexão e tente novamente.</p>
+  </div>`;
 }
