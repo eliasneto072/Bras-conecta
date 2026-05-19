@@ -99,6 +99,7 @@ export const authApi = {
   login:    (email, password)       => post('/auth/login', { email, password }),
   register: (name, email, password) => post('/users', { name, email, password }),
   me:       ()                      => get('/auth/me', true),
+  logout:   ()                      => post('/auth/logout', null, true),
 };
 
 // ============================

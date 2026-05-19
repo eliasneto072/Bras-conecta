@@ -7,9 +7,8 @@ import { loginSchema } from './auth.schemas';
 
 function getUserId(req: AuthRequest) {
   if (!req.user?.id) {
-    throw new AppError('Unauthenticated', 401, 'UNAUTHENTICATED');
+    throw new AppError('Não autenticado', 401, 'UNAUTHENTICATED');
   }
-
   return req.user.id;
 }
 
@@ -25,10 +24,10 @@ export class AuthController {
     return ok(res, result);
   };
 
-  logout = async (_req: AuthRequest, res: Response) => {
-    await authService.logout();
-
-    return ok(res, { message: 'Logged out successfully' });
+  logout = async (req: AuthRequest, res: Response) => {
+    const token = req.rawToken ?? '';
+    await authService.logout(token);
+    return ok(res, { message: 'Logout realizado com sucesso' });
   };
 
   me = async (req: AuthRequest, res: Response) => {

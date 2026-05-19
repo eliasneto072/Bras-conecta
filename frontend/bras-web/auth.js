@@ -42,11 +42,8 @@ export function isSeller() {
 
 export async function login(email, password) {
   const data = await authApi.login(email, password);
-
-  // seu backend retorna { token, user } — ajuste se precisar
   localStorage.setItem(TOKEN_KEY, data.data.token);
   localStorage.setItem(USER_KEY, JSON.stringify(data.data.user));
-
   return data.data.user;
 }
 
@@ -55,7 +52,16 @@ export async function register(name, email, password) {
   return data.data.user;
 }
 
-export function logout() {
+export async function logout() {
+  // Avisa o servidor para invalidar o token na blacklist.
+  // O try/catch garante que mesmo se a API falhar (sem internet,
+  // servidor fora), o usuário ainda sai do frontend normalmente.
+  try {
+    await authApi.logout();
+  } catch {
+    // silencioso — logout local acontece de qualquer forma
+  }
+
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
   window.location.hash = '#/login';
@@ -65,7 +71,6 @@ export function logout() {
 // Guards
 // ============================
 
-// redireciona para login se não estiver logado
 export function requireAuth() {
   if (!isLoggedIn()) {
     window.location.hash = '#/login';
@@ -74,7 +79,6 @@ export function requireAuth() {
   return true;
 }
 
-// redireciona para home se não for lojista/admin
 export function requireSeller() {
   if (!isLoggedIn()) {
     window.location.hash = '#/login';
