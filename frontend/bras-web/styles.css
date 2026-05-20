@@ -964,3 +964,255 @@ body{
   from { opacity: 0; transform: translateX(-50%) translateY(10px); }
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
+
+/* =====================================================
+   RESPONSIVIDADE MOBILE
+   Adicionar no final de styles.css
+   ===================================================== */
+
+/* ── Breakpoints usados:
+   480px  → telefone pequeno
+   768px  → tablet / telefone grande
+   980px  → desktop pequeno
+   ===================================================== */
+
+/* ── Grid de produtos — 1 coluna no mobile, 2 no tablet ── */
+@media (max-width: 699px) {
+  .grid.cols-2,
+  .grid.cols-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 700px) and (max-width: 979px) {
+  .grid.cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── Header — compacto no mobile ── */
+@media (max-width: 600px) {
+  .header__row {
+    height: auto;
+    padding: 10px 0;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .nav {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .nav a {
+    font-size: 13px;
+  }
+
+  .btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+/* ── Hero — empilha no mobile ── */
+@media (max-width: 899px) {
+  .hero__image {
+    height: 180px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero {
+    padding: 16px;
+  }
+
+  .h1 {
+    font-size: 22px;
+  }
+
+  .hero__image {
+    height: 160px;
+  }
+}
+
+/* ── Dashboard — sidebar vira top bar no mobile ── */
+@media (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .dashboard__sidebar {
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .dashboard__logo {
+    font-size: 16px;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .dashboard__nav {
+    flex-direction: row;
+    gap: 4px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .dashboard__nav a {
+    padding: 8px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .dashboard__footer {
+    display: none;
+  }
+
+  .dashboard__content {
+    padding: 16px;
+  }
+
+  .dashboard__top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  /* Stats — 1 coluna no mobile, 3 no tablet */
+  .dashboard__stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 14px;
+  }
+
+  .stat-card p {
+    font-size: 20px;
+  }
+
+  /* Página de produtos */
+  .dashboard-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .dashboard-products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Ações do produto em coluna */
+  .dashboard-product-actions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Stats — 1 coluna em telas muito pequenas */
+  .dashboard__stats {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+/* ── Modal — ocupa tela inteira no mobile ── */
+@media (max-width: 600px) {
+  .modal {
+    align-items: flex-end;
+  }
+
+  .modal__content {
+    max-width: 100%;
+    border-radius: 24px 24px 0 0;
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 20px 16px;
+  }
+
+  .modal__content--wide {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* ── Carrinho — empilha em telas pequenas ── */
+@media (max-width: 500px) {
+  .cart-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 0;
+  }
+
+  .cart-row__right {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ── Pedidos — ajustes no mobile ── */
+@media (max-width: 600px) {
+  .order-row {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 14px;
+  }
+
+  .order-row__meta {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .order-row__info {
+    gap: 8px;
+  }
+}
+
+/* ── Store detail — header empilhado ── */
+@media (max-width: 500px) {
+  .store-detail-banner {
+    height: 150px;
+  }
+
+  .store-detail-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* ── Seção de imagens da loja no dashboard ── */
+@media (max-width: 500px) {
+  .store-images-grid {
+    flex-direction: column;
+  }
+}
+
+/* ── Produto detalhe — imagem menor no mobile ── */
+@media (max-width: 600px) {
+  .product-detail-img {
+    max-height: 260px;
+  }
+}
+
+/* ── Utilitários gerais mobile ── */
+@media (max-width: 768px) {
+  .section {
+    margin: 16px 0;
+  }
+
+  .box {
+    padding: 12px;
+  }
+
+  .panel__cover {
+    height: 140px;
+  }
+}
