@@ -8,10 +8,11 @@ import { renderStoreDetail } from './pages/storeDetail.js';
 import { renderProductDetail }from './pages/productDetail.js';
 import { renderCart }        from './pages/cartPage.js';
 import { renderLogin }       from './pages/login.js';
-import { renderDashboard }   from './pages/dashboard/index.js';
+import { renderDashboard }         from './pages/dashboard/index.js';
+import { renderDashboardProducts } from './pages/dashboard/products.js';
+import { renderDashboardOrders }   from './pages/dashboard/orders.js';
 import { updateCartBadge }   from './cart.js';
 import { isLoggedIn, isSeller, getUser, logout } from './auth.js';
-import { renderDashboardProducts } from './pages/dashboard/products.js';
 
 // ============================
 // Header dinâmico
@@ -25,8 +26,7 @@ function updateHeader() {
   const dashLink = isLoggedIn()
     ? `
       ${isSeller() ? `<a class="btn" href="#/dashboard">Painel</a>` : ''}
-      
-       <button class="btn btn--ghost" id="logoutBtn" style="cursor:pointer">${user?.name?.split(' ')[0] || 'Sair'} ✕</button>`
+      <button class="btn btn--ghost" id="logoutBtn" style="cursor:pointer">${user?.name?.split(' ')[0] || 'Sair'} ✕</button>`
     : `<a class="btn" href="#/login">Entrar</a>`;
 
   nav.innerHTML = `
@@ -74,15 +74,14 @@ async function route() {
   if (parts[0] === 'loja' && parts[1] && parts[2] === 'produto' && parts[3])
     return renderProductDetail(parts[1], parts[3]);
 
-  if (parts[0] === 'carrinho')                         return renderCart();
-  if (parts[0] === 'login')                            return renderLogin();
+  if (parts[0] === 'carrinho') return renderCart();
+  if (parts[0] === 'login')    return renderLogin();
+
   if (parts[0] === 'dashboard') {
-
-  if (parts[1] === 'products')
-    return renderDashboardProducts();
-
-  return renderDashboard();
-}
+    if (parts[1] === 'products') return renderDashboardProducts();
+    if (parts[1] === 'orders')   return renderDashboardOrders();
+    return renderDashboard();
+  }
 
   return renderNotFound();
 }
