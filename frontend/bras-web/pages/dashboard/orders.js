@@ -21,7 +21,7 @@ const NEXT_STATUSES = {
   PENDING:   ['CONFIRMED', 'CANCELED'],
   CONFIRMED: ['PAID', 'CANCELED'],
   PAID:      ['SHIPPED'],
-  SHIPPED:   ['DELIVERED'],
+  SHIPPED:   [], // lojista não confirma entrega — só o cliente pode
   DELIVERED: [],
   CANCELED:  [],
 };

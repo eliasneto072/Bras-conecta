@@ -209,29 +209,94 @@ export class OrdersService {
     return order as IOrder;
   }
 
+//  async updateStatus(actor: Actor, id: string, input: //UpdateOrderStatusInput): Promise<IOrder> {
+//    const order = await this.ensureOrderExists(id);
+//
+//    const store = await storesRepository.findById(order.//storeId);
+//    const isStoreOwner = store?.ownerId === actor.id;
+//
+//    if (!isAdmin(actor.role) && !isStoreOwner) {
+//      throw new AppError('Forbidden', 403, 'FORBIDDEN');
+//    }
+//
+//    // cliente não pode cancelar pedido já confirmado/pago///enviado
+//    const lockedStatuses: OrderStatus[] = [
+//      OrderStatus.PAID,
+//      OrderStatus.SHIPPED,
+//      OrderStatus.DELIVERED,
+//    ];
+//
+//    if (lockedStatuses.includes(order.status as //OrderStatus) && !isAdmin(actor.role)) {
+//      throw new AppError('Cannot update status of this //order', 400, 'ORDER_STATUS_LOCKED');
+//    }
+//
+//    return ordersRepository.updateStatus(id, { status: input.//status });
+//  }
+
   async updateStatus(actor: Actor, id: string, input: UpdateOrderStatusInput): Promise<IOrder> {
     const order = await this.ensureOrderExists(id);
 
-    const store = await storesRepository.findById(order.storeId);
+    const store        = await storesRepository.findById(order.storeId);
     const isStoreOwner = store?.ownerId === actor.id;
+    const isCustomer   = order.userId === actor.id;
 
-    if (!isAdmin(actor.role) && !isStoreOwner) {
+    if (!isAdmin(actor.role) && !isStoreOwner && !isCustomer) {
       throw new AppError('Forbidden', 403, 'FORBIDDEN');
     }
 
-    // cliente não pode cancelar pedido já confirmado/pago/enviado
-    const lockedStatuses: OrderStatus[] = [
-      OrderStatus.PAID,
-      OrderStatus.SHIPPED,
-      OrderStatus.DELIVERED,
-    ];
+    const current = order.status as OrderStatus;
+    const next    = input.status as OrderStatus;
 
-    if (lockedStatuses.includes(order.status as OrderStatus) && !isAdmin(actor.role)) {
-      throw new AppError('Cannot update status of this order', 400, 'ORDER_STATUS_LOCKED');
+    // ── Regras de transição por papel ────────────────────────────────────
+    //
+    //  Lojista:  PENDING → CONFIRMED → PAID → SHIPPED
+    //            PENDING | CONFIRMED → CANCELED
+    //
+    //  Cliente:  SHIPPED → DELIVERED  (confirma o recebimento)
+    //            PENDING | CONFIRMED  → CANCELED
+    //
+    //  Admin:    qualquer transição
+
+    if (!isAdmin(actor.role)) {
+
+      const sellerTransitions: Partial<Record<OrderStatus, OrderStatus[]>> = {
+        [OrderStatus.PENDING]:   [OrderStatus.CONFIRMED, OrderStatus.CANCELED],
+        [OrderStatus.CONFIRMED]: [OrderStatus.PAID,      OrderStatus.CANCELED],
+        [OrderStatus.PAID]:      [OrderStatus.SHIPPED],
+        [OrderStatus.SHIPPED]:   [], // lojista não confirma entrega
+      };
+
+      const customerTransitions: Partial<Record<OrderStatus, OrderStatus[]>> = {
+        [OrderStatus.PENDING]:   [OrderStatus.CANCELED],
+        [OrderStatus.CONFIRMED]: [OrderStatus.CANCELED],
+        [OrderStatus.SHIPPED]:   [OrderStatus.DELIVERED], // só o cliente confirma entrega
+      };
+
+      if (isStoreOwner) {
+        const allowed = sellerTransitions[current] ?? [];
+        if (!allowed.includes(next)) {
+          throw new AppError(
+            `Lojista não pode alterar de ${current} para ${next}`,
+            400,
+            'ORDER_TRANSITION_NOT_ALLOWED',
+          );
+        }
+      } else if (isCustomer) {
+        const allowed = customerTransitions[current] ?? [];
+        if (!allowed.includes(next)) {
+          throw new AppError(
+            `Cliente não pode alterar de ${current} para ${next}`,
+            400,
+            'ORDER_TRANSITION_NOT_ALLOWED',
+          );
+        }
+      }
     }
 
-    return ordersRepository.updateStatus(id, { status: input.status });
+    return ordersRepository.updateStatus(id, { status: next });
   }
+
+
 }
 
 export const ordersService = new OrdersService();

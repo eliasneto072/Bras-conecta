@@ -11,6 +11,7 @@ import { renderLogin }       from './pages/login.js';
 import { renderDashboard }         from './pages/dashboard/index.js';
 import { renderDashboardProducts } from './pages/dashboard/products.js';
 import { renderDashboardOrders }   from './pages/dashboard/orders.js';
+import { renderMyOrders }          from './pages/myOrders.js';
 import { updateCartBadge }   from './cart.js';
 import { isLoggedIn, isSeller, getUser, logout } from './auth.js';
 
@@ -25,7 +26,9 @@ function updateHeader() {
 
   const dashLink = isLoggedIn()
     ? `
-      ${isSeller() ? `<a class="btn" href="#/dashboard">Painel</a>` : ''}
+      ${isSeller()
+        ? `<a class="btn" href="#/dashboard">Painel</a>`
+        : `<a class="btn btn--ghost" href="#/pedidos">Meus Pedidos</a>`}
       <button class="btn btn--ghost" id="logoutBtn" style="cursor:pointer">${user?.name?.split(' ')[0] || 'Sair'} ✕</button>`
     : `<a class="btn" href="#/login">Entrar</a>`;
 
@@ -75,6 +78,7 @@ async function route() {
     return renderProductDetail(parts[1], parts[3]);
 
   if (parts[0] === 'carrinho') return renderCart();
+  if (parts[0] === 'pedidos')   return renderMyOrders();
   if (parts[0] === 'login')    return renderLogin();
 
   if (parts[0] === 'dashboard') {
